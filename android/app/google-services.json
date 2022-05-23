@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1068578624173",
+    "project_id": "shoppinglistapp-2b0f4",
+    "storage_bucket": "shoppinglistapp-2b0f4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068578624173:android:55f5d08bb79d0433f96c24",
+        "android_client_info": {
+          "package_name": "com.example.l5_iot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1068578624173-jr9nnmhva7jgsr5r6nlpq0ciaa6nc26s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8CcN7sJnS-xi9J3d_BC83NIot2buayAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1068578624173-jr9nnmhva7jgsr5r6nlpq0ciaa6nc26s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
