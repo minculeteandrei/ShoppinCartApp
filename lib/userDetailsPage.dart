@@ -19,8 +19,21 @@ class UserDetailsPage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            Text("your email: " + FirebaseAuth.instance.currentUser!.email.toString()),
-            Text("your UserId: " + FirebaseAuth.instance.currentUser!.uid.toString()),
+            SizedBox.fromSize(
+              size: Size(20, 30),
+            ),
+            Text("your email: " + FirebaseAuth.instance.currentUser!.email.toString(),
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text("your UserId: " + FirebaseAuth.instance.currentUser!.uid.toString(),
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             ElevatedButton(
                 onPressed: () {Navigator.push(context,
                     MaterialPageRoute(builder: (context) => MyHomePage(title: "My ShoppingList App")));},

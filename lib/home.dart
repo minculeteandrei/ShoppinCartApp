@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
         surname: userSurname,
         name: user.displayName.toString()
     );
+
   }
 
 
@@ -85,6 +86,62 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference favItems = firestore.collection('favorites');
+
+    Future<int> getAndUpdateId() async {
+       var data = await favItems.doc("uniqueId").get();
+      int id = int.parse(data["id"]);
+      favItems.doc("uniqueId").update({'id': (id + 1).toString()});
+      return id;
+    }
+
+    Future<int> addItem(String name, int qty, double price) async {
+      int doc = await getAndUpdateId();
+      favItems
+          .doc(doc.toString())
+          .set({
+        'name': name,
+        'quantity': qty,
+        'price': price,
+      })
+          .then((value) => print("Item added"))
+          .catchError((error) => print("Failed to add item to database: $error"));
+      return doc;
+    }
+
+        Future<void> processSwipe(DismissDirection direction, int index) async {
+      if(direction == DismissDirection.endToStart && _selectedIndex == 1)
+        setState(() {
+          favItems.doc(shoppingCart[index].dbId.toString())
+              .delete()
+              .then((value) => print("favorite deleted"))
+              .catchError((error) => print("Failed to delete $error"));
+          shoppingCart.removeAt(index);
+        });
+      else if(_selectedIndex == 1){
+        setState(() {
+          favorites.add(shoppingCart[index]);
+          duplicateFavorites.add(shoppingCart[index]);
+          shoppingCart.removeAt(index);
+        });
+      }
+      else if(direction == DismissDirection.endToStart){
+        setState(() {
+          shoppingCart.removeAt(index);
+        });
+      }
+      else {
+        if(!shoppingCart[index].addedToDb){
+          shoppingCart[index].dbId = await addItem(shoppingCart[index].name, shoppingCart[index].qty, shoppingCart[index].price) ;
+          shoppingCart[index].addedToDb = true;
+        }
+        setState(() {
+          favorites.add(shoppingCart[index]);
+          duplicateFavorites.add(shoppingCart[index]);
+          shoppingCart.removeAt(index);
+        });
+      }
+    }
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -100,7 +157,10 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Text(widget.title, textAlign: TextAlign.left,),
               OutlinedButton(
-                  onPressed: () => FirebaseAuth.instance.signOut(),
+                  onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.popUntil(context, ModalRoute.withName("/"));
+                    },
                   style: OutlinedButton.styleFrom(
                     backgroundColor: Colors.blueGrey,
                     primary: Colors.white
@@ -168,18 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (context, index) {
                     return Dismissible(
                       key: Key(shoppingCart[index].name),
-                      onDismissed: (DismissDirection direction) {
-                        if(direction == DismissDirection.endToStart)
-                          setState(() {
-                            shoppingCart.removeAt(index);
-                          });
-                        else
-                          setState(() {
-                            favorites.add(shoppingCart[index]);
-                            duplicateFavorites.add(shoppingCart[index]);
-                            shoppingCart.removeAt(index);
-                          });
-                      },
+                      onDismissed: (DismissDirection direction) {Future.wait([processSwipe(direction, index)]);},
                       child: ShoppingListItem(
                         product: shoppingCart[index],
                         inCart: shoppingCart.contains(shoppingCart[index]),

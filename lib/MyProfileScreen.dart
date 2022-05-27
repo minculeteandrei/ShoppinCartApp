@@ -23,38 +23,64 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    user.reload();
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile"),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            Text("UID: " + user.uid),
-            Text("email: " + user.email.toString()),
-            TextField(
-              decoration: InputDecoration(
-                labelText: "change email",
-                hintText: "type new email"
+      body: Padding(
+        padding: EdgeInsets.all(30),
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox.fromSize(
+                size: Size(20, 30),
               ),
-              controller: changeEmail,
-            ),
-            Text("name: " + user.displayName.toString()),
-            TextField(
-              decoration: InputDecoration(
-                labelText: "Change Name",
-                hintText: "type new name"
+              Text("UID: " + user.uid,
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              controller: changeName,
-            ),
-            ElevatedButton(
+              Text("email: " + user.email.toString(),
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextField(
+                decoration: InputDecoration(
+                    labelText: "change email",
+                    hintText: "type new email"
+                ),
+                controller: changeEmail,
+              ),
+              SizedBox.fromSize(
+                size: Size(20, 20),
+              ),
+              Text("name: " + user.displayName.toString(),
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox.fromSize(
+                size: Size(20, 20),
+              ),
+              TextField(
+                decoration: InputDecoration(
+                    labelText: "Change Name",
+                    hintText: "type new name"
+                ),
+                controller: changeName,
+              ),
+              ElevatedButton(
                 onPressed: changeDetails,
                 child: Text("Submit"),
-            )
-          ],
+              )
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 
@@ -62,13 +88,18 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     if (changeEmail.text.trim() != "") {
       await user.updateEmail(changeEmail.text);
       FirebaseAuth.instance.signOut();
-      Navigator.pop(context);
-      Navigator.pop(context);
+      Navigator.popUntil(context, ModalRoute.withName("/"));
     }
     if (changeName.text.trim() != "") {
       await user.updateDisplayName(changeName.text);
+      //print(user.displayName);
+      setState(() {
+        user.reload();
+        user = FirebaseAuth.instance.currentUser!;
+      });
     }
 
-    setState(() {});
+    changeEmail.clear();
+    changeName.clear();
   }
 }

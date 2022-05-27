@@ -7,8 +7,10 @@ class Product {
   final String name;
   final int qty;
   final double price;
+  bool addedToDb = false;
+  late final int dbId;
 
-  const Product({
+   Product({
     required this.name,
     required this.qty,
     required this.price,
